@@ -268,7 +268,7 @@ go=go1.26.9
 | ----------------------- | -------------- |
 | O1 容器镜像             | 已做；见下方 [v1.0.2 发布运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39591801985) 与 [GHCR 镜像](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14) |
 | O2 缓存对反馈时间的影响 | 已做；见下方 [PR #12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 的 10 次对照运行 |
-| O3 迁移到小组项目       | 未做           |
+| O3 迁移到小组项目       | 已迁移至 [PaperMate](https://github.com/li-yuelang/SE26Project-05)。[CI/门禁 PR #93](https://github.com/li-yuelang/SE26Project-05/pull/93)、[打包发布 PR #94](https://github.com/li-yuelang/SE26Project-05/pull/94) 均已合入。[main CI 与制品](https://github.com/li-yuelang/SE26Project-05/actions/runs/39602884628)；[Release v1.0.0](https://github.com/li-yuelang/SE26Project-05/releases/tag/v1.0.0)；[release gate 拒绝](https://github.com/li-yuelang/SE26Project-05/actions/runs/39603204895)。实际下载附件后已校验哈希、追溯到 PR/提交/构建，并从 wheel 独立安装验证 `/version`。[完整报告、原始 SHA-256、trace 与接口输出及迁移差异](https://github.com/li-yuelang/SE26Project-05/blob/b0a20fd130615f84d96f2354315b9af482affa49/docs/O3.md)。迁移使用根目录 Python/FastAPI 后端与 React/Vite 前端，依赖锁定；非 integration 测试不覆盖真实数据库和外部服务。 |
 
 ### O1：容器镜像
 
@@ -309,12 +309,12 @@ ghcr.io/jeff-060111/ops-lab1-14@sha256:593ecc29474ca4f3a34c055d235118f647dfda741
 
 每位成员一行，只填写 GitHub 用户名，无需填写姓名；行数应与小组人数一致。
 
-| GitHub 用户名 | 发起并合入的 PR 编号 | 审批过的 PR 编号 |
-| --- | --- | --- |
-| jeff-060111 | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2#pullrequestreview-5596279306)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3#pullrequestreview-5596363421) |
-| stardustwang | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3)、[#6](https://github.com/jeff-060111/ops-lab1-14/pull/6) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596845205)、[#5](https://github.com/jeff-060111/ops-lab1-14/pull/5#pullrequestreview-5597250578)、[#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598052861) |
-| li-yuelang | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4) | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598059969)、[#8](https://github.com/jeff-060111/ops-lab1-14/pull/8#pullrequestreview-5598572089) |
-| S1mon-Chen | [#5](https://github.com/jeff-060111/ops-lab1-14/pull/5) | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6#pullrequestreview-5597385656) |
-| Fancyyyf | [#8](https://github.com/jeff-060111/ops-lab1-14/pull/8) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596847788) |
+| GitHub 用户名 | 主要分工 | 发起并合入的 PR 编号 | 审批过的 PR 编号 |
+| --- | --- | --- | --- |
+| jeff-060111 | 版本说明与仓库文档 | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2#pullrequestreview-5596279306)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3#pullrequestreview-5596363421) |
+| stardustwang | CI、Release 与 O1 容器镜像 | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3)、[#6](https://github.com/jeff-060111/ops-lab1-14/pull/6)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596845205)、[#5](https://github.com/jeff-060111/ops-lab1-14/pull/5#pullrequestreview-5597250578)、[#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598052861) |
+| li-yuelang | 第一轮测试门禁与 O3 项目迁移 | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4)、[#13](https://github.com/jeff-060111/ops-lab1-14/pull/13) | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598059969)、[#8](https://github.com/jeff-060111/ops-lab1-14/pull/8#pullrequestreview-5598572089)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11#pullrequestreview-5598899215) |
+| S1mon-Chen | 第二轮周日边界测试 | [#5](https://github.com/jeff-060111/ops-lab1-14/pull/5) | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6#pullrequestreview-5597385656)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11#pullrequestreview-5598897772) |
+| Fancyyyf | 实验报告、追溯分析与 O2 缓存实验 | [#8](https://github.com/jeff-060111/ops-lab1-14/pull/8) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596847788)、[#13](https://github.com/jeff-060111/ops-lab1-14/pull/13#pullrequestreview-5600173611) |
 
-本表只将已合入 main 的 PR 计入“发起并合入”；[#1](https://github.com/jeff-060111/ops-lab1-14/pull/1) 已关闭但未合入，[#9](https://github.com/jeff-060111/ops-lab1-14/pull/9) 目前尚未合入。
+本表只将已合入 main 的 PR 计入“发起并合入”；文档 [#9](https://github.com/jeff-060111/ops-lab1-14/pull/9) 待审，O2 实验 [#12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 按题目要求不合入。
