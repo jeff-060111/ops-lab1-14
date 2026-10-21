@@ -10,18 +10,18 @@ permissions:
   contents: read
 
 jobs:
-  ci:
+  ci:                       # job 名即任务 3 中要选择的必需检查名称
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
-
-      # TODO 1
+      
+      # TODO 1：安装 Go 1.26.9
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.26.9'
 
-      # TODO 2：测试前打印上下文，测试失败也能看到
+      # TODO 2：打印上下文信息（放在测试前）
       - name: Print GitHub context
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -34,7 +34,7 @@ jobs:
           echo "sha=$SHA"
           echo "pr_head_sha=$PR_HEAD_SHA"
 
-      # TODO 3：三个检查各自一个 step
+      # TODO 3：各项检查分步执行
       - name: make fmt-check
         run: make fmt-check
 
@@ -44,7 +44,7 @@ jobs:
       - name: make test
         run: make test
 
-      # TODO 4：只在 push 到 main 时打包
+      # TODO 4：只在 push 到 main 时打包并生成校验和
       - name: make package
         if: github.event_name == 'push'
         env:
@@ -54,17 +54,20 @@ jobs:
           COMMIT: ${{ github.sha }}
         run: |
           make package
-          sha256sum dist/* || true
-          for f in dist/*.tar.gz; do
-            [ -e "$f" ] || continue
-            sha256sum "$f" > "$f.sha256"
-          done
+          # 进入 dist 目录，确保生成的 .sha256 文件内没有 dist/ 前缀
+          cd dist
+          # 打印所有文件（含二进制和 tar.gz）的校验和
+          sha256sum *
+          # 专门为 tar.gz 生成校验和文件
+          sha256sum *.tar.gz > *.tar.gz.sha256
 
+      # 上传 Artifact
       - name: Upload artifact
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          name: ci-${{ github.sha }}-${{ github.run_number }}
+          # artifact 名称包含提交号和构建号
+          name: artifact-${{ github.sha }}-${{ github.run_number }}
           path: |
             dist/*.tar.gz
             dist/*.tar.gz.sha256
