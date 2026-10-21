@@ -349,6 +349,57 @@ GHCR 新包默认私有；仓库关联默认继承访问权限，不自动继承
 
 **波动与局限。** 两组内部 job 耗时分别波动 6 s、9 s；共享 runner 的负载、机器性能、缓存下载与解压、进程调度、网络和 Actions 步骤时间的秒级取整都会影响单次结果。样本仅各 5 次，按先开启后关闭的顺序采集，没有随机交错，也未比较包含排队的端到端反馈时间；这个 11 s 差值仅说明本仓库、本次 PR 测得的情况，不能直接推广到其他项目或 runner。
 
+### O3：迁移到小组项目
+
+**迁移对象与分工。** 本组将合并门禁、CI 和可追溯发布迁移到 [PaperMate 项目 `li-yuelang/SE26Project-05`](https://github.com/li-yuelang/SE26Project-05)，使用根目录的 `backend/`（Python/FastAPI）和 `frontend/`（React/Vite），不构建 `TechPrototype/`、`FinalRelease/` 历史副本。迁移分三个 PR 完成，以下三个 PR 均已合入该项目的 main：
+
+| PR | 迁移内容与作用 |
+|---|---|
+| [#93：前后端 CI 与合并门禁](https://github.com/li-yuelang/SE26Project-05/pull/93) | 扩展原有后端 CI，加入前端测试与生产构建，固定运行环境，移除路径过滤；通过健康接口缺陷的失败、修复过程验证合并门禁。 |
+| [#94：可追溯打包与发布](https://github.com/li-yuelang/SE26Project-05/pull/94) | 新增 `/version`、包内构建信息、统一打包及 SHA-256 校验、main 制品上传、tag 发布门禁和 `trace.py`，并补充安装说明。 |
+| [#95：正式验证记录](https://github.com/li-yuelang/SE26Project-05/pull/95) | 仅更新 `docs/O3.md`，补入真实 Release、原始哈希、门禁拒绝运行、追溯输出和正式附件独立安装后的 `/version` 响应。 |
+
+**CI 与合并门禁。** 工作流在指向 main 的 PR 和 push 到 main 时触发，不设路径过滤；runner 固定为 `ubuntu-24.04`，Python、Node 和 uv 分别固定为 `3.12.10`、`24.14.0`、`0.11.28`。后端按 `uv.lock` 安装依赖，执行 Ruff 和非 integration 测试；前端使用 `npm ci` 按 `frontend/package-lock.json` 安装依赖，执行 Vitest 覆盖率检查和 Vite 生产构建。main 要求至少 1 人审批，`backend`、`frontend` 均为必需检查，Bypass list 为空。项目原为私有仓库时，界面提示当前套餐不执行规则；确认项目可公开后改为公开，实际观察到缺少审批不能合并。演练中把 `/health` 的 `status` 从 `ok` 改为 `broken`，既有测试报错 `assert 'broken' == 'ok'`；在已有审批的情况下，[backend 失败仍阻止合并](https://github.com/li-yuelang/SE26Project-05/actions/runs/39595228559)，[恢复为 ok 后检查通过](https://github.com/li-yuelang/SE26Project-05/actions/runs/39595634063)，随后 squash 合入。
+
+**打包与发布。** 前后端检查成功后，`package` job 构建前端静态文件和后端 wheel，将运行依赖清单、锁文件、数据库迁移文件和运行说明一起打成 tar.gz，并生成 `.sha256`。PR 运行验证打包流程，只有 main 的 push 上传主干 artifact，保留 14 天；[main 运行 39602884628](https://github.com/li-yuelang/SE26Project-05/actions/runs/39602884628) 的前后端检查、打包和上传均成功，artifact 为 `papermate-68edde7a312f58edc560c0256409bd61ee1e3d5b-185`。构建信息包括 `version`、`build_no`、`commit`、`run_id`、`run_url`，分别写入包根目录的 `BUILD_INFO.json`、前端的 `build_info.json` 和 wheel 内的 `app/build_info.json`；后端 `/version` 读取安装包内的文件。推送 `vX.Y.Z` tag 后，发布工作流先检查 tag 格式，并用 `git merge-base --is-ancestor` 确认提交属于 main 历史，再运行检查、重新构建、打包和追溯，最后创建 Release。
+
+下表中的 **v1.0.0 属于迁移仓库 `SE26Project-05`**，记录的是 PaperMate 的发布：
+
+| 项目 | 实际证据 |
+|---|---|
+| Release | [PaperMate v1.0.0](https://github.com/li-yuelang/SE26Project-05/releases/tag/v1.0.0)，2026-10-21 20:53:28（UTC+08:00）发布 |
+| 发布运行 | [39603124499](https://github.com/li-yuelang/SE26Project-05/actions/runs/39603124499)，成功；版本 `1.0.0`，构建号 `1` |
+| 提交与 PR | `68edde7a312f58edc560c0256409bd61ee1e3d5b`，由 [PR #94](https://github.com/li-yuelang/SE26Project-05/pull/94) 引入 |
+| 附件 | `papermate_1.0.0.tar.gz`、`papermate_1.0.0.tar.gz.sha256` |
+| 发布时独立记录的 SHA-256 | `3242f69d4dbe1a382d673771874c94c29e4cbaf65751a7acc7e8d1f79e183804` |
+| release gate 拒绝运行 | [39603204895](https://github.com/li-yuelang/SE26Project-05/actions/runs/39603204895)，未合入提交 `0abc02bffab70f4b65b335d1f5636ba983d23a2e` 上的临时 tag `v0.0.1` 被拒绝 |
+
+拒绝运行在 `Release gate` 步骤打印 `Release rejected: tag commit is not in main history` 并以退出码 1 结束，未创建 Release。临时 tag 和 `scratch/o3-release-gate` 分支已清理，失败运行保留。
+
+**正式附件的追溯与运行验证。** 下载 Release 的 tar.gz 和 `.sha256` 后，在迁移项目的完整克隆中运行：
+
+```bash
+python scripts/trace.py dist/release/papermate_1.0.0.tar.gz
+```
+
+脚本退出码为 0：SHA-256 与上表相同，三处构建信息一致，提交位于 `origin/main` 历史中，并输出 PR #94 与发布运行 39603124499 的链接。随后在 Windows amd64、Python 3.12.10、uv 0.11.28 环境中，从实际下载的附件解压，在新的独立虚拟环境中按 `requirements.txt` 校验依赖哈希并安装，再以 `--no-deps` 安装附件内 wheel，从解压目录启动 uvicorn。实际 `/version` 响应如下，完成后已停止验证服务：
+
+```json
+{
+  "code": "OK",
+  "message": "success",
+  "data": {
+    "version": "1.0.0",
+    "build_no": "1",
+    "commit": "68edde7a312f58edc560c0256409bd61ee1e3d5b",
+    "run_id": "39603124499",
+    "run_url": "https://github.com/li-yuelang/SE26Project-05/actions/runs/39603124499"
+  }
+}
+```
+
+**迁移差异与局限。** Go 示例的单工具链、单二进制变为 Python 后端和 JavaScript 前端，需要分别锁定依赖、测试和构建；Python 通过 setuptools 的 package-data 将构建信息装入 wheel，wheel 之外仍需解释器和第三方依赖，安装时需要联网。wheel 的内部 Python 分发版本仍是 `0.1.0`，整体前后端发布版本由 `BUILD_INFO.json` 和 `/version` 中的 `1.0.0` 标识。验证时前端 22 个测试及覆盖率检查通过，后端新增版本测试后为 190 个测试通过、1 个 integration 测试排除；前端覆盖率仅针对已配置的基础单元模块，后端非 integration 测试不代表真实 PostgreSQL、Redis、Celery 或外部模型服务已验证。CI 和 Release 分别重新构建，归档时间未归一化，不声称字节级可重复；程序回退也不会自动回退数据库，需另行确认 schema 兼容性。校验和能发现附件与原始哈希不符，但如果附件和 `.sha256` 同时被替换，仍需使用上表独立记录的原始值判断。完整的脚本输出、安装说明和证据见 [O3 报告](https://github.com/li-yuelang/SE26Project-05/blob/5a06900577f677f3fcc863d363f9760355d0fa66/docs/O3.md)。
+
 ## 8. 成员贡献
 
 每位成员一行，只填写 GitHub 用户名，无需填写姓名；行数应与小组人数一致。
