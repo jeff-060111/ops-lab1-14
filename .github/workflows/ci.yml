@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.26.9'
-          cache: true
+          cache: false
           cache-dependency-path: go.mod
 
       - name: Show Go cache result
