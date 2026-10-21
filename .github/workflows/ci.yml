@@ -15,13 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       
-      # TODO 1：安装 Go 1.26.9
+      # TODO 1：用 actions/setup-go 安装 Go，go-version 写 1.26.9
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.26.9'
 
-      # TODO 2：打印上下文信息（放在测试前）
+      # TODO 2：添加一个 step，打印上下文
+      # 按提示要求：先放入 env，再在脚本中以环境变量引用
       - name: Print GitHub context
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -29,12 +30,12 @@ jobs:
           SHA: ${{ github.sha }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
-          echo "event_name=$EVENT_NAME"
-          echo "ref=$REF"
-          echo "sha=$SHA"
-          echo "pr_head_sha=$PR_HEAD_SHA"
+          echo "github.event_name: $EVENT_NAME"
+          echo "github.ref: $REF"
+          echo "github.sha: $SHA"
+          echo "github.event.pull_request.head.sha: $PR_HEAD_SHA"
 
-      # TODO 3：各项检查分步执行
+      # TODO 3：make fmt-check、make vet、make test 各占一个 step
       - name: make fmt-check
         run: make fmt-check
 
@@ -44,7 +45,7 @@ jobs:
       - name: make test
         run: make test
 
-      # TODO 4：只在 push 到 main 时打包并生成校验和
+      # TODO 4：只在 push 到 main 时执行打包
       - name: make package
         if: github.event_name == 'push'
         env:
@@ -54,19 +55,17 @@ jobs:
           COMMIT: ${{ github.sha }}
         run: |
           make package
-          # 进入 dist 目录，确保生成的 .sha256 文件内没有 dist/ 前缀
-          cd dist
-          # 打印所有文件（含二进制和 tar.gz）的校验和
-          sha256sum *
-          # 专门为 tar.gz 生成校验和文件
-          sha256sum *.tar.gz > *.tar.gz.sha256
+          # 用 sha256sum 打印二进制文件和 tar.gz 的校验和
+          # 注意：这里精确指定文件，千万不要用 `sha256sum dist/*`，否则遇到目录会报错
+          sha256sum dist/*.tar.gz
+          sha256sum dist/*/enroll-conflict
 
-      # 上传 Artifact
+      # 用 actions/upload-artifact 上传文件
       - name: Upload artifact
         if: github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
-          # artifact 名称包含提交号和构建号
+          # artifact 名称中包含提交号和构建号
           name: artifact-${{ github.sha }}-${{ github.run_number }}
           path: |
             dist/*.tar.gz
