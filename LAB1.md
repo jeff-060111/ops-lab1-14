@@ -94,9 +94,9 @@ build\tvcs.modified=true
 | 第二轮：仅含缺陷时仍然通过的运行                 | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571101808](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571101808)                                                                                                                                                                                                 |
 | 第二轮：补测试后失败的运行                       | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571842625](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571842625)                                                                                                                                                                                                 |
 | 第二轮：撤销缺陷后通过的运行                     | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39572259840](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39572259840)                                                                                                                                                                                                 |
-| 未合入分支上的 tag 被 release gate 拒绝的运行    | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847)                                                                                                                                                                                |
-| Release v1.0.0                                   | <https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0>                                                                                                                                                                                                           |
-| Release v1.0.1                                   | <https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.1>                                                                                                                                                                                                                                                                                                                                    |
+| 未合入分支上的 tag 被 release gate 拒绝的运行    | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847)                                                                                                                                                                                                 |
+| Release v1.0.0                                   | [https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0)                                                                                                                                                                                                           |
+| Release v1.0.1                                   | [https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.1](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.1)                                                                                                                                                                                                           |
 
 两轮 gate 演练分别见 [第一轮 PR #4](https://github.com/jeff-060111/ops-lab1-14/pull/4) 和 [第二轮 PR #5](https://github.com/jeff-060111/ops-lab1-14/pull/5)；两个 PR 页面均保留了 `ci` 失败的记录。release gate 测试结束后，远端 tag `v0.0.1` 和分支 `scratch/gate-test` 已删除，且未生成 `v0.0.1` Release。
 
@@ -121,14 +121,14 @@ remote: - Required status check "ci" is expected.
 
 对 v1.0.0 和 v1.0.1 各运行一次 `scripts/trace.sh`，输出与追溯结果如下。
 
-| 项 | v1.0.0 | v1.0.1 |
-|---|---|---|
-| 版本号 | `1.0.0` | `1.0.1` |
-| 构建号 | `1` | `3` |
-| 提交号（SHA） | `e2acab7b9d372db8f9e87dd5764d3ad928618f02` | `15c1efa7d0a5296bababf36f433ac00ed2492c32` |
-| 引入该提交的 PR | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6) | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) |
-| 构建它的 Actions 运行（`trace.sh` 给出的链接） | <https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048> | <https://github.com/jeff-060111/ops-lab1-14/actions/runs/39584254408> |
-| 制品 sha256（发布当时，取自 Release 里的 `.sha256`） | `2fb80a7fa53d4a6dbfc1b29b9f88ac3484a9bb9c04315b5033201070d23edbc0` | `65d1d9946dcc664de70f41681a27f0265e440ff4694a7db4e8a459fef4b5be1f` |
+| 项                                                     | v1.0.0                                                                                                                                    | v1.0.1                                                                                                                                    |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| 版本号                                                 | `1.0.0`                                                                                                                                 | `1.0.1`                                                                                                                                 |
+| 构建号                                                 | `1`                                                                                                                                     | `3`                                                                                                                                     |
+| 提交号（SHA）                                          | `e2acab7b9d372db8f9e87dd5764d3ad928618f02`                                                                                              | `15c1efa7d0a5296bababf36f433ac00ed2492c32`                                                                                              |
+| 引入该提交的 PR                                        | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6)                                                                                    | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7)                                                                                    |
+| 构建它的 Actions 运行（`trace.sh` 给出的链接）       | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048) | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39584254408](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39584254408) |
+| 制品 sha256（发布当时，取自 Release 里的 `.sha256`） | `2fb80a7fa53d4a6dbfc1b29b9f88ac3484a9bb9c04315b5033201070d23edbc0`                                                                      | `65d1d9946dcc664de70f41681a27f0265e440ff4694a7db4e8a459fef4b5be1f`                                                                      |
 
 仅凭构建号不能唯一确定是哪次运行。`build_no` 取自 `github.run_number`，每个工作流各自从 1 开始计数。`v1.0.0` 的构建号是 1，但仓库中同时存在 `ci` 的[第 1 次运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39558591004)（run 39558591004，提交 `ef89a31`，事件为 push 到 main）和 `release` 的[第 1 次运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048)（run 39574857048，提交 `e2acab7`，事件为 tag `v1.0.0`），所以 `build_no=1` 不能唯一定位运行。`BUILD_INFO` 中的 `run_id` 取自全局唯一的 `github.run_id`，`trace.sh` 据此给出运行链接。`v1.0.1` 的构建号是 3，因为中间的 [release 运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847)（tag `v0.0.1`）虽在 release gate 处失败，仍占用了构建号 2。
 
@@ -203,23 +203,23 @@ go=go1.26.9
 
 提交到发布的间隔，记录四个已合入的 PR。起点取各 PR 中第一个提交的时间，终点取首次包含该 PR 的 Release 的 `published_at`，间隔为两者之差；时间均已换算为北京时间。
 
-| PR | 第一个提交的时间 | 合入时间 | 对应 Release 的发布时间 | 提交到发布的间隔 |
-| --- | --- | --- | --- | --- |
+| PR                                                     | 第一个提交的时间                                                                                                 | 合入时间            | 对应 Release 的发布时间                                                                      | 提交到发布的间隔  |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------------- | ----------------- |
 | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4) | [2026-10-21 16:04:24](https://github.com/jeff-060111/ops-lab1-14/commit/f9732523ae1c353e60bc44b580599540f7b5a6fe) | 2026-10-21 16:23:48 | [v1.0.0：2026-10-21 17:10:54](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0) | 1 小时 6 分 30 秒 |
-| [#5](https://github.com/jeff-060111/ops-lab1-14/pull/5) | [2026-10-21 16:39:35](https://github.com/jeff-060111/ops-lab1-14/commit/914608e0139e9fc9220bcf4d74af14767179399b) | 2026-10-21 16:56:40 | [v1.0.0：2026-10-21 17:10:54](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0) | 31 分 19 秒 |
-| [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6) | [2026-10-21 17:05:15](https://github.com/jeff-060111/ops-lab1-14/commit/0042ddf095ac3424d7967f6f2efb82c6a0bd17b0) | 2026-10-21 17:07:55 | [v1.0.0：2026-10-21 17:10:54](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0) | 5 分 39 秒 |
-| [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) | [2026-10-21 18:03:36](https://github.com/jeff-060111/ops-lab1-14/commit/d2cdbb2fb0048458c6fb378d3513305c3f33cc30) | 2026-10-21 18:05:55 | [v1.0.1：2026-10-21 18:24:17](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.1) | 20 分 41 秒 |
+| [#5](https://github.com/jeff-060111/ops-lab1-14/pull/5) | [2026-10-21 16:39:35](https://github.com/jeff-060111/ops-lab1-14/commit/914608e0139e9fc9220bcf4d74af14767179399b) | 2026-10-21 16:56:40 | [v1.0.0：2026-10-21 17:10:54](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0) | 31 分 19 秒       |
+| [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6) | [2026-10-21 17:05:15](https://github.com/jeff-060111/ops-lab1-14/commit/0042ddf095ac3424d7967f6f2efb82c6a0bd17b0) | 2026-10-21 17:07:55 | [v1.0.0：2026-10-21 17:10:54](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0) | 5 分 39 秒        |
+| [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) | [2026-10-21 18:03:36](https://github.com/jeff-060111/ops-lab1-14/commit/d2cdbb2fb0048458c6fb378d3513305c3f33cc30) | 2026-10-21 18:05:55 | [v1.0.1：2026-10-21 18:24:17](https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.1) | 20 分 41 秒       |
 
 `ci` 工作流的运行时长（采用 Actions 页面显示的 **Total duration**，而非单个 job 的时长）：
 
-| 运行 | 事件（PR / push） | 时长 | 备注 |
-| --- | --- | --- | --- |
-| [#7](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39567086007) | PR #4 | 28 秒 | 第一轮，失败；测试拦住了引入的缺陷 |
-| [#8](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39568404719) | PR #4 | 33 秒 | 第一轮，修复后通过 |
-| [#9](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39568947726) | push 到 main | 52 秒 | 第一轮合入后通过，生成制品 |
-| [#10](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571101808) | PR #5 | 23 秒 | 第二轮，引入未覆盖的缺陷后仍通过 |
-| [#11](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571842625) | PR #5 | 23 秒 | 第二轮，补充边界测试后失败 |
-| [#12](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39572259840) | PR #5 | 27 秒 | 第二轮，撤销缺陷后通过 |
+| 运行                                                                      | 事件（PR / push） | 时长  | 备注                               |
+| ------------------------------------------------------------------------- | ----------------- | ----- | ---------------------------------- |
+| [#7](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39567086007)  | PR #4             | 28 秒 | 第一轮，失败；测试拦住了引入的缺陷 |
+| [#8](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39568404719)  | PR #4             | 33 秒 | 第一轮，修复后通过                 |
+| [#9](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39568947726)  | push 到 main      | 52 秒 | 第一轮合入后通过，生成制品         |
+| [#10](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571101808) | PR #5             | 23 秒 | 第二轮，引入未覆盖的缺陷后仍通过   |
+| [#11](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571842625) | PR #5             | 23 秒 | 第二轮，补充边界测试后失败         |
+| [#12](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39572259840) | PR #5             | 27 秒 | 第二轮，撤销缺陷后通过             |
 
 六次运行的时长为 23～52 秒，算术平均为 31 秒。局限说明：`ci` 时长受共享 runner 负载影响，单次噪声大，且本组样本量很小；「提交到发布的间隔」借用 DORA 的变更前置时间概念，这四个 PR 的样本不能代表真实团队水平。
 
@@ -243,13 +243,13 @@ go=go1.26.9
 
 本地复测环境为 WSL Ubuntu 24.04（x86_64）、Go `1.26.9 linux/amd64`、GNU tar 1.35，在干净的 `v1.0.1` 提交 `15c1efa7…` 上构建。①②④⑤固定 `VERSION=1.0.1 BUILD_NO=101 RUN_ID=local-q3 COMMIT=15c1efa7d0a5296bababf36f433ac00ed2492c32`；③仅把 `BUILD_NO` 改为 `102`。④⑤临时删去 Makefile 的 `--mtime=@0`，两次间隔 3 秒；复测后已恢复临时实验仓库的 Makefile，未提交任何实验改动。
 
-| 构建 | 条件 | 二进制 sha256 | tar.gz sha256 |
-| --- | --- | --- | --- |
-| ① | 固定四项参数 | `470b8d8ef87f22f8e8debe21eb1150fadeb5116c6d887d06981ede16e45b4135` | `321ce276837443789c1cdb15d24bd1aed0c20be9c4cd437a39347efb5cf79202` |
-| ② | 与①完全相同 | `470b8d8ef87f22f8e8debe21eb1150fadeb5116c6d887d06981ede16e45b4135` | `321ce276837443789c1cdb15d24bd1aed0c20be9c4cd437a39347efb5cf79202` |
-| ③ | 仅 `BUILD_NO=102` | `2da24d057b7351daf44f2e88b967b40fd2952f0571faab6e590bbed290c701fe` | `0c04faa2a2f12e558603df3008c5df2a246863e20ef1a8e0afc15bda137a774c` |
-| ④ | 去掉 `--mtime=@0`，其余同① | `b00e780bbc75a325b5d7aa24a19aa8ca716265933c419c756f084acaaee6a023` | `253a0c5c32e35ea44d32764c91c1f3c09e260461ce53d313f1c6810ab1d608c3` |
-| ⑤ | 同④，间隔 3 秒 | `b00e780bbc75a325b5d7aa24a19aa8ca716265933c419c756f084acaaee6a023` | `bbdfad7175b41a115bc7f1f805ba3d25a61c2f50a10e71d8ebcee46c028c27a1` |
+| 构建    | 条件                                                                                                                                                                                                               | 二进制 sha256                                                                       | tar.gz sha256                                                                       |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| ①      | 固定四项参数                                                                                                                                                                                                       | `470b8d8ef87f22f8e8debe21eb1150fadeb5116c6d887d06981ede16e45b4135`                | `321ce276837443789c1cdb15d24bd1aed0c20be9c4cd437a39347efb5cf79202`                |
+| ②      | 与①完全相同                                                                                                                                                                                                       | `470b8d8ef87f22f8e8debe21eb1150fadeb5116c6d887d06981ede16e45b4135`                | `321ce276837443789c1cdb15d24bd1aed0c20be9c4cd437a39347efb5cf79202`                |
+| ③      | 仅 `BUILD_NO=102`                                                                                                                                                                                                | `2da24d057b7351daf44f2e88b967b40fd2952f0571faab6e590bbed290c701fe`                | `0c04faa2a2f12e558603df3008c5df2a246863e20ef1a8e0afc15bda137a774c`                |
+| ④      | 去掉 `--mtime=@0`，其余同①                                                                                                                                                                                      | `b00e780bbc75a325b5d7aa24a19aa8ca716265933c419c756f084acaaee6a023`                | `253a0c5c32e35ea44d32764c91c1f3c09e260461ce53d313f1c6810ab1d608c3`                |
+| ⑤      | 同④，间隔 3 秒                                                                                                                                                                                                    | `b00e780bbc75a325b5d7aa24a19aa8ca716265933c419c756f084acaaee6a023`                | `bbdfad7175b41a115bc7f1f805ba3d25a61c2f50a10e71d8ebcee46c028c27a1`                |
 | Actions | [main push #17：首次](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39582054130/job/119161766937)与 [Re-run 第 2 次](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39582054130/job/119192615995) | 首次、重跑均为 `4bf4046162f9cc8a1bc481a030fbcb6d221bb6055d282a55f9965a5cbc321d21` | 首次、重跑均为 `7c5adaf7321fb3b32d479912c3f6468e473a0fe09878e4959c87b06cbff6acd8` |
 
 哪些相同、哪些不同，原因分别是什么？④ 的二进制文件与 ① 是否相同？如果不同，请结合任务 0 中看到的 vcs 信息分析。据此说明制品中应当包含什么、不应包含什么。另外，`release` 在同一个提交上再次编译，而没有直接发布 `ci` 产出的主干制品：为什么这样做？这与 L-05 第 11 页的“一次构建、多处部署”是否冲突，代价是什么？
@@ -264,10 +264,10 @@ go=go1.26.9
 
 ## 7. 选做记录
 
-| 选做                    | 完成情况与证据 |
-| ----------------------- | -------------- |
-| O1 容器镜像             | 已做；见下方 [v1.0.2 发布运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39591801985) 与 [GHCR 镜像](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14) |
-| O2 缓存对反馈时间的影响 | 已做；见下方 [PR #12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 的 10 次对照运行 |
+| 选做                    | 完成情况与证据                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| O1 容器镜像             | 已做；见下方 [v1.0.2 发布运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39591801985) 与 [GHCR 镜像](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| O2 缓存对反馈时间的影响 | 已做；见下方 [PR #12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 的 10 次对照运行                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | O3 迁移到小组项目       | 已迁移至 [PaperMate](https://github.com/li-yuelang/SE26Project-05)。[CI/门禁 PR #93](https://github.com/li-yuelang/SE26Project-05/pull/93)、[打包发布 PR #94](https://github.com/li-yuelang/SE26Project-05/pull/94) 均已合入。[main CI 与制品](https://github.com/li-yuelang/SE26Project-05/actions/runs/39602884628)；[Release v1.0.0](https://github.com/li-yuelang/SE26Project-05/releases/tag/v1.0.0)；[release gate 拒绝](https://github.com/li-yuelang/SE26Project-05/actions/runs/39603204895)。实际下载附件后已校验哈希、追溯到 PR/提交/构建，并从 wheel 独立安装验证 `/version`。[完整报告、原始 SHA-256、trace 与接口输出及迁移差异](https://github.com/li-yuelang/SE26Project-05/blob/b0a20fd130615f84d96f2354315b9af482affa49/docs/O3.md)。迁移使用根目录 Python/FastAPI 后端与 React/Vite 前端，依赖锁定；非 integration 测试不覆盖真实数据库和外部服务。 |
 
 ### O1：容器镜像
@@ -288,18 +288,18 @@ ghcr.io/jeff-060111/ops-lab1-14@sha256:593ecc29474ca4f3a34c055d235118f647dfda741
 
 **预期与设置。** 示例的 `go.mod` 没有第三方依赖，因此预计缓存几乎不节省下载时间；Go 编译缓存可能使 `vet`、`test` 快几秒到十余秒。原 `ci.yml` 虽未显式关闭 `setup-go` 缓存，但仓库没有 `go.sum`，[原主干运行日志](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39582054130/job/119161766937) 报告找不到依赖文件、未生成缓存键。为得到有效对照，在不合入的草稿 [PR #12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 中先设置 `cache: true`、`cache-dependency-path: go.mod`，并打印 `cache-hit`；首次运行用于写入缓存，此后用 **Re-run all jobs** 重跑 5 次。第二个提交仅把 `cache` 改为 `false`，保持其他设置相同，再运行 5 次（首次运行加 4 次重跑）。两组均使用 `ubuntu-24.04`、Go `1.26.9`，只执行 PR 的 `ci` job。下表的耗时是 GitHub API 中该 job 的 `completed_at - started_at`，单位为秒，不包含排队时间。
 
-| 组别 | Actions 运行及 attempt | `cache-hit` | `ci` job 耗时 |
-| --- | --- | --- | ---: |
-| 开启缓存 | [39597803962 / 2](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/2) | `true` | 17 s |
-| 开启缓存 | [39597803962 / 3](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/3) | `true` | 11 s |
-| 开启缓存 | [39597803962 / 4](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/4) | `true` | 17 s |
-| 开启缓存 | [39597803962 / 5](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/5) | `true` | 17 s |
-| 开启缓存 | [39597803962 / 6](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/6) | `true` | 13 s |
-| 关闭缓存 | [39598265198 / 1](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/1) | 空（未启用） | 25 s |
-| 关闭缓存 | [39598265198 / 2](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/2) | 空（未启用） | 32 s |
-| 关闭缓存 | [39598265198 / 3](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/3) | 空（未启用） | 28 s |
-| 关闭缓存 | [39598265198 / 4](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/4) | 空（未启用） | 23 s |
-| 关闭缓存 | [39598265198 / 5](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/5) | 空（未启用） | 29 s |
+| 组别     | Actions 运行及 attempt                                                                           | `cache-hit` | `ci` job 耗时 |
+| -------- | ------------------------------------------------------------------------------------------------ | ------------- | --------------: |
+| 开启缓存 | [39597803962 / 2](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/2) | `true`      |            17 s |
+| 开启缓存 | [39597803962 / 3](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/3) | `true`      |            11 s |
+| 开启缓存 | [39597803962 / 4](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/4) | `true`      |            17 s |
+| 开启缓存 | [39597803962 / 5](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/5) | `true`      |            17 s |
+| 开启缓存 | [39597803962 / 6](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/6) | `true`      |            13 s |
+| 关闭缓存 | [39598265198 / 1](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/1) | 空（未启用）  |            25 s |
+| 关闭缓存 | [39598265198 / 2](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/2) | 空（未启用）  |            32 s |
+| 关闭缓存 | [39598265198 / 3](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/3) | 空（未启用）  |            28 s |
+| 关闭缓存 | [39598265198 / 4](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/4) | 空（未启用）  |            23 s |
+| 关闭缓存 | [39598265198 / 5](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39598265198/attempts/5) | 空（未启用）  |            29 s |
 
 开启缓存的预热运行 [39597803962 / 1](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39597803962/attempts/1) 显示 `cache-hit=false`、耗时 28 s，结束时成功保存缓存，因此未计入上述 5 次命中样本。开启缓存组的 job 中位数 **17 s**（范围 11–17 s），关闭缓存组中位数 **28 s**（范围 23–32 s），本组样本的中位数相差 **11 s**。`Setup Go` 步骤两组的中位数分别为 2 s、1 s；`make vet` 分别为 6 s、18 s，`make test` 分别为 1 s、3 s。日志显示，主要收益来自复用 Go 编译缓存，而非下载第三方依赖。
 
@@ -309,12 +309,10 @@ ghcr.io/jeff-060111/ops-lab1-14@sha256:593ecc29474ca4f3a34c055d235118f647dfda741
 
 每位成员一行，只填写 GitHub 用户名，无需填写姓名；行数应与小组人数一致。
 
-| GitHub 用户名 | 主要分工 | 发起并合入的 PR 编号 | 审批过的 PR 编号 |
-| --- | --- | --- | --- |
-| jeff-060111 | 版本说明与仓库文档 | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2#pullrequestreview-5596279306)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3#pullrequestreview-5596363421) |
-| stardustwang | CI、Release 与 O1 容器镜像 | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3)、[#6](https://github.com/jeff-060111/ops-lab1-14/pull/6)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596845205)、[#5](https://github.com/jeff-060111/ops-lab1-14/pull/5#pullrequestreview-5597250578)、[#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598052861) |
-| li-yuelang | 第一轮测试门禁与 O3 项目迁移 | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4)、[#13](https://github.com/jeff-060111/ops-lab1-14/pull/13) | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598059969)、[#8](https://github.com/jeff-060111/ops-lab1-14/pull/8#pullrequestreview-5598572089)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11#pullrequestreview-5598899215) |
-| S1mon-Chen | 第二轮周日边界测试 | [#5](https://github.com/jeff-060111/ops-lab1-14/pull/5) | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6#pullrequestreview-5597385656)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11#pullrequestreview-5598897772) |
-| Fancyyyf | 实验报告、追溯分析与 O2 缓存实验 | [#8](https://github.com/jeff-060111/ops-lab1-14/pull/8) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596847788)、[#13](https://github.com/jeff-060111/ops-lab1-14/pull/13#pullrequestreview-5600173611) |
-
-本表只将已合入 main 的 PR 计入“发起并合入”；文档 [#9](https://github.com/jeff-060111/ops-lab1-14/pull/9) 待审，O2 实验 [#12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 按题目要求不合入。
+| GitHub 用户名 | 主要分工                         | 发起并合入的 PR 编号                                                                                                                                                                                                             | 审批过的 PR 编号                                                                                                                                                                                                                                                |
+| ------------- | -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| jeff-060111   | 版本说明与仓库文档               | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7)                                                                                                                                                                           | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2#pullrequestreview-5596279306)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3#pullrequestreview-5596363421)                                                                                        |
+| stardustwang  | CI、Release 与 O1 容器镜像       | [#2](https://github.com/jeff-060111/ops-lab1-14/pull/2)、[#3](https://github.com/jeff-060111/ops-lab1-14/pull/3)、[#6](https://github.com/jeff-060111/ops-lab1-14/pull/6)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11) | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596845205)、[#5](https://github.com/jeff-060111/ops-lab1-14/pull/5#pullrequestreview-5597250578)、[#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598052861)   |
+| li-yuelang    | 第一轮测试门禁与 O3 项目迁移     | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4)、[#13](https://github.com/jeff-060111/ops-lab1-14/pull/13)                                                                                                                 | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7#pullrequestreview-5598059969)、[#8](https://github.com/jeff-060111/ops-lab1-14/pull/8#pullrequestreview-5598572089)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11#pullrequestreview-5598899215) |
+| S1mon-Chen    | 第二轮周日边界测试               | [#5](https://github.com/jeff-060111/ops-lab1-14/pull/5)                                                                                                                                                                           | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6#pullrequestreview-5597385656)、[#11](https://github.com/jeff-060111/ops-lab1-14/pull/11#pullrequestreview-5598897772)                                                                                      |
+| Fancyyyf      | 实验报告、追溯分析与 O2 缓存实验 | [#8](https://github.com/jeff-060111/ops-lab1-14/pull/8)、[#9](https://github.com/jeff-060111/ops-lab1-14/pull/9)（待合入） | [#4](https://github.com/jeff-060111/ops-lab1-14/pull/4#pullrequestreview-5596847788)、[#13](https://github.com/jeff-060111/ops-lab1-14/pull/13#pullrequestreview-5600173611)                                                                                      |
