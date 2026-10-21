@@ -95,8 +95,10 @@ build\tvcs.modified=true
 | 第二轮：补测试后失败的运行                       | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571842625](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39571842625)                                                                                                                                                                                                 |
 | 第二轮：撤销缺陷后通过的运行                     | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39572259840](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39572259840)                                                                                                                                                                                                 |
 | 未合入分支上的 tag 被 release gate 拒绝的运行    | [https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847)                                                                                                                                                                                |
-| Release v1.0.0                                   | [https://github.com/jeff-060111/ops-lab1-14/releases#release-v1.0.0](https://github.com/jeff-060111/ops-lab1-14/releases#release-v1.0.0)                                                                                                                                                                                                           |
-| Release v1.0.1                                   | <链接>                                                                                                                                                                                                                                                                                                                                    |
+| Release v1.0.0                                   | <https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.0>                                                                                                                                                                                                           |
+| Release v1.0.1                                   | <https://github.com/jeff-060111/ops-lab1-14/releases/tag/v1.0.1>                                                                                                                                                                                                                                                                                                                                    |
+
+两轮 gate 演练分别见 [第一轮 PR #4](https://github.com/jeff-060111/ops-lab1-14/pull/4) 和 [第二轮 PR #5](https://github.com/jeff-060111/ops-lab1-14/pull/5)；两个 PR 页面均保留了 `ci` 失败的记录。release gate 测试结束后，远端 tag `v0.0.1` 和分支 `scratch/gate-test` 已删除，且未生成 `v0.0.1` Release。
 
 直接推送 main 被规则集拒绝的终端记录。执行环境为华为云 ECS `ops-lab1-main`（Ubuntu 24.04 LTS），小组仓库位于 `~/lab1`：
 
@@ -180,7 +182,7 @@ go=go1.26.9
 
 任务 6 第 4 步，两次 `/version` 的输出（先运行 v1.0.1，再换回 v1.0.0）：
 
-```json
+```text
 {"version":"1.0.1","commit":"15c1efa7d0a5296bababf36f433ac00ed2492c32","build_no":"3","go":"go1.26.9"}
 {"version":"1.0.0","commit":"e2acab7b9d372db8f9e87dd5764d3ad928618f02","build_no":"1","go":"go1.26.9"}
 ```
