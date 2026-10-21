@@ -71,3 +71,86 @@ jobs:
             --verify-tag \
             --title "$GITHUB_REF_NAME" \
             --generate-notes
+  container:
+    name: Build and publish container
+    needs: release
+    runs-on: ubuntu-24.04
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Download and verify Release package
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          PACKAGE="enroll-conflict_${VERSION}_linux_amd64"
+
+          mkdir -p downloads image-context
+
+          gh release download "$GITHUB_REF_NAME" \
+            --repo "$GITHUB_REPOSITORY" \
+            --pattern "${PACKAGE}.tar.gz" \
+            --pattern "${PACKAGE}.tar.gz.sha256" \
+            --dir downloads
+
+          (
+            cd downloads
+            sha256sum -c "${PACKAGE}.tar.gz.sha256"
+          )
+
+          tar -xzf "downloads/${PACKAGE}.tar.gz" -C image-context
+          cat "image-context/${PACKAGE}/BUILD_INFO"
+
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "PACKAGE_DIR=image-context/$PACKAGE" >> "$GITHUB_ENV"
+          echo "IMAGE=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_ENV"
+
+      - name: Log in to GHCR
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_USER: ${{ github.actor }}
+        run: |
+          printf '%s' "$GH_TOKEN" |
+            docker login ghcr.io \
+              --username "$GH_USER" \
+              --password-stdin
+
+      - name: Build image from Release package
+        shell: bash
+        run: |
+          docker build \
+            --platform linux/amd64 \
+            --file Dockerfile \
+            --build-arg VERSION="$VERSION" \
+            --build-arg COMMIT="$GITHUB_SHA" \
+            --build-arg SOURCE="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" \
+            --tag "$IMAGE:$GITHUB_REF_NAME" \
+            "$PACKAGE_DIR"
+
+      - name: Push image and record digest
+        shell: bash
+        run: |
+          docker push "$IMAGE:$GITHUB_REF_NAME"
+          docker pull --platform linux/amd64 "$IMAGE:$GITHUB_REF_NAME"
+
+          IMAGE_REF=$(docker image inspect \
+            "$IMAGE:$GITHUB_REF_NAME" \
+            --format '{{index .RepoDigests 0}}')
+
+          echo "Image reference: $IMAGE_REF"
+
+          {
+            echo "### Container image"
+            echo
+            echo "- Tag: $IMAGE:$GITHUB_REF_NAME"
+            echo "- Digest reference: $IMAGE_REF"
+            echo "- Platform: linux/amd64"
+          } >> "$GITHUB_STEP_SUMMARY"
