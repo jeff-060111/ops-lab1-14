@@ -17,9 +17,17 @@ jobs:
       
       # TODO 1：用 actions/setup-go 安装 Go，go-version 写 1.26.9
       - name: Setup Go
+        id: setup_go
         uses: actions/setup-go@v5
         with:
           go-version: '1.26.9'
+          cache: true
+          cache-dependency-path: go.mod
+
+      - name: Show Go cache result
+        env:
+          CACHE_HIT: ${{ steps.setup_go.outputs.cache-hit }}
+        run: echo "cache-hit=$CACHE_HIT"
 
       # TODO 2：添加一个 step，打印上下文
       # 按提示要求：先放入 env，再在脚本中以环境变量引用
