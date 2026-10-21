@@ -52,3 +52,10 @@ func TestValid(t *testing.T) {
 		}
 	}
 }
+
+func TestValidSunday(t *testing.T) {
+	sunday := Section{Weekday: 7, Start: 1, End: 2, Weeks: AllWeeks}
+	if !sunday.Valid() {
+		t.Errorf("周日（Weekday=7）的时段应当合法：%+v", sunday)
+	}
+}
