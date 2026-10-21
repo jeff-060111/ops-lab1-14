@@ -266,7 +266,7 @@ go=go1.26.9
 
 | 选做                    | 完成情况与证据                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| O1 容器镜像             | 已做；见下方 [v1.0.2 发布运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39591801985) 与 [GHCR 镜像](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| O1 容器镜像             | 已完成构建、推送及按 digest 运行；匿名拉取尚缺成功记录。见下方 [v1.0.2 发布运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39591801985) 与 [GHCR 镜像](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | O2 缓存对反馈时间的影响 | 已做；见下方 [PR #12](https://github.com/jeff-060111/ops-lab1-14/pull/12) 的 10 次对照运行                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | O3 迁移到小组项目       | 已迁移至 [PaperMate](https://github.com/li-yuelang/SE26Project-05)。[CI/门禁 PR #93](https://github.com/li-yuelang/SE26Project-05/pull/93)、[打包发布 PR #94](https://github.com/li-yuelang/SE26Project-05/pull/94) 均已合入。[main CI 与制品](https://github.com/li-yuelang/SE26Project-05/actions/runs/39602884628)；[Release v1.0.0](https://github.com/li-yuelang/SE26Project-05/releases/tag/v1.0.0)；[release gate 拒绝](https://github.com/li-yuelang/SE26Project-05/actions/runs/39603204895)。实际下载附件后已校验哈希、追溯到 PR/提交/构建，并从 wheel 独立安装验证 `/version`。[完整报告、原始 SHA-256、trace 与接口输出及迁移差异](https://github.com/li-yuelang/SE26Project-05/blob/b0a20fd130615f84d96f2354315b9af482affa49/docs/O3.md)。迁移使用根目录 Python/FastAPI 后端与 React/Vite 前端，依赖锁定；非 integration 测试不覆盖真实数据库和外部服务。 |
 
@@ -278,11 +278,55 @@ go=go1.26.9
 ghcr.io/jeff-060111/ops-lab1-14@sha256:593ecc29474ca4f3a34c055d235118f647dfda7417ba7ea34bd5282cc75aec50
 ```
 
-组员确认在 `ops-lab1-main`（主机架构 `x86_64`）按上述 **digest** 运行容器，`/version` 返回版本 `1.0.2`、构建号 `4`。镜像配置中的平台为 `linux/amd64`。在 arm64 主机上需指定 `--platform linux/amd64`；能否运行取决于 Docker 的跨架构模拟支持，运行速度通常较慢。本实验没有构建多架构镜像。
+本次容器运行验证在 Windows 主机 `WANGYIBO` 上完成，通过 Git Bash 调用 Docker Desktop；Docker 上下文为 `desktop-linux`。`docker version` 显示 Client 为 `windows/amd64`、Server 为 `linux/amd64`，Docker Engine 版本为 `29.8.2`；`uname -m` 返回 `x86_64`，`docker info` 返回 `Docker host=linux/x86_64`。这是 O1 的运行环境，与任务 0、任务 6 记录的云主机环境分别记录。
+
+使用完整 digest 启动容器，实际命令与输出如下：
+
+```bash
+IMAGE_REF='ghcr.io/jeff-060111/ops-lab1-14@sha256:593ecc29474ca4f3a34c055d235118f647dfda7417ba7ea34bd5282cc75aec50'
+
+docker run -d \
+  --name lab1-o1 \
+  --pull=never \
+  --platform linux/amd64 \
+  -p 127.0.0.1:18080:8080 \
+  "$IMAGE_REF" \
+  -addr :8080
+```
+
+```text
+b74b5cd6dd6e6ebb8ec5afd9191c73ecc5436dac2fd8931df1a762c7e10ca6f0
+
+$ curl -fsS http://127.0.0.1:18080/version
+{"version":"1.0.2","commit":"be3c7801ebea6a3d1f7172b2b9c816233d90a8de","build_no":"4","go":"go1.26.9"}
+
+$ docker inspect lab1-o1 --format '{{.Config.Image}}'
+ghcr.io/jeff-060111/ops-lab1-14@sha256:593ecc29474ca4f3a34c055d235118f647dfda7417ba7ea34bd5282cc75aec50
+```
+
+以上记录证明容器能够正常响应，运行版本为 `1.0.2`、构建号为 `4`，并且容器使用的是完整 digest 引用。本次运行主机与镜像均为 amd64，无需跨架构模拟。在 arm64 主机上运行该镜像时需指定 `--platform linux/amd64`，并依赖 Docker 的跨架构模拟支持；本实验没有构建多架构镜像。
 
 **为什么不另用 Release 事件触发镜像工作流？** `release` job 使用自动提供的 `GITHUB_TOKEN` 创建 Release。GitHub 会抑制该令牌产生的大多数后续工作流触发事件，`release` 发布事件也不会启动另一个工作流，以避免递归运行。因此本组将 `container` 放在同一 `release.yml` 中，通过 `needs: release` 保证发布门禁、测试及附件创建成功后再构建镜像；发布失败时镜像 job 不执行。参见 [GitHub 的 GITHUB_TOKEN 说明](https://docs.github.com/en/actions/concepts/security/github_token)。
 
-**GHCR 能否匿名拉取？** [包页面](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14) 当前显示 **Public**。本次另用空 `DOCKER_CONFIG` 执行 `docker manifest inspect`，并用无账号凭证取得的 GHCR 匿名读取令牌下载该 digest 的镜像配置及全部两层内容；三者的 SHA256 均与清单吻合，说明镜像内容可匿名获取。由于本机 Docker daemon 未启动，此处未取得无凭证 `docker pull` 的原始终端输出。GHCR 新包默认私有；仓库关联只会默认继承访问权限，不保证继承公开可见性，须以包的可见性和实际匿名访问为准。参见 [GitHub 的容器注册表说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)及[包权限说明](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)。使用 digest 可固定镜像内容，避免 tag 更新后指向另一份镜像。
+**GHCR 能否匿名拉取？** [包页面](https://github.com/jeff-060111/ops-lab1-14/pkgs/container/ops-lab1-14) 已确认为 **Public**。本组曾使用临时空 Docker 配置尝试按 digest 匿名拉取，执行命令如下：
+
+```bash
+O1_DOCKER_HOST=$(docker context inspect --format '{{.Endpoints.docker.Host}}')
+O1_ANON_CONFIG=$(mktemp -d)
+
+docker --host "$O1_DOCKER_HOST" --config "$O1_ANON_CONFIG" \
+  pull --platform linux/amd64 "$IMAGE_REF"
+```
+
+该次操作返回：
+
+```text
+Error response from daemon: Get "https://ghcr.io/v2/": EOF
+```
+
+该错误发生在 Docker daemon 访问 GHCR 的连接过程中，不能据此认定 daemon 未启动，也不能据此判断包不支持匿名拉取。之后已成功按 digest 启动容器并查询 `/version`，但现有记录未包含临时空配置下成功拉取的输出，因此匿名拉取验证尚缺成功证据，需补充实际成功记录；容器运行成功本身不能替代匿名拉取验证。
+
+GHCR 新包默认私有；仓库关联默认继承访问权限，不自动继承公开可见性，因此需要单独检查包的可见性并验证匿名访问。参见 [GitHub 的容器注册表说明](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry)及[包权限说明](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility)。使用 digest 可固定镜像内容，避免 tag 更新后指向另一份镜像。
 
 ### O2：缓存对反馈时间的影响
 
