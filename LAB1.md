@@ -218,7 +218,7 @@ remote: - Required status check "ci" is expected.
 | ----------------------- | -------------- |
 | O1 容器镜像             | 未做           |
 | O2 缓存对反馈时间的影响 | 未做           |
-| O3 迁移到小组项目       | 未做           |
+| O3 迁移到小组项目 | 已迁移至 [PaperMate](https://github.com/li-yuelang/SE26Project-05)。[CI/门禁 PR #93](https://github.com/li-yuelang/SE26Project-05/pull/93)、[打包发布 PR #94](https://github.com/li-yuelang/SE26Project-05/pull/94) 均已合入。[main CI 与制品](https://github.com/li-yuelang/SE26Project-05/actions/runs/39602884628)；[Release v1.0.0](https://github.com/li-yuelang/SE26Project-05/releases/tag/v1.0.0)；[release gate 拒绝](https://github.com/li-yuelang/SE26Project-05/actions/runs/39603204895)。实际下载附件后已校验哈希、追溯到 PR/提交/构建，并从 wheel 独立安装验证 `/version`。[完整报告、原始 SHA-256、trace 与接口输出及迁移差异](https://github.com/li-yuelang/SE26Project-05/blob/b0a20fd130615f84d96f2354315b9af482affa49/docs/O3.md)。迁移使用根目录 Python/FastAPI 后端与 React/Vite 前端，依赖锁定；非 integration 测试不覆盖真实数据库和外部服务。 |
 
 ## 8. 成员贡献
 
