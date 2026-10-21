@@ -117,38 +117,72 @@ remote: - Required status check "ci" is expected.
 
 ## 4. 追溯与运行
 
-对 v1.0.0 和 v1.0.1 各运行一次 `scripts/trace.sh`，粘贴输出，并填写下表。
+对 v1.0.0 和 v1.0.1 各运行一次 `scripts/trace.sh`，输出与追溯结果如下。
 
-| 项                                                 | v1.0.0       | v1.0.1       |
-| -------------------------------------------------- | ------------ | ------------ |
-| 版本号                                             | <填写>       | <填写>       |
-| 构建号                                             | <填写>       | <填写>       |
-| 提交号（SHA）                                      | <填写>       | <填写>       |
-| 引入该提交的 PR                                    | <编号与链接> | <编号与链接> |
-| 构建它的 Actions 运行（`trace.sh` 给出的链接）   | <链接>       | <链接>       |
-| 制品 sha256（发布当时，取自 Release 里的 .sha256） | <填写>       | <填写>       |
+| 项 | v1.0.0 | v1.0.1 |
+|---|---|---|
+| 版本号 | `1.0.0` | `1.0.1` |
+| 构建号 | `1` | `3` |
+| 提交号（SHA） | `e2acab7b9d372db8f9e87dd5764d3ad928618f02` | `15c1efa7d0a5296bababf36f433ac00ed2492c32` |
+| 引入该提交的 PR | [#6](https://github.com/jeff-060111/ops-lab1-14/pull/6) | [#7](https://github.com/jeff-060111/ops-lab1-14/pull/7) |
+| 构建它的 Actions 运行（`trace.sh` 给出的链接） | <https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048> | <https://github.com/jeff-060111/ops-lab1-14/actions/runs/39584254408> |
+| 制品 sha256（发布当时，取自 Release 里的 `.sha256`） | `2fb80a7fa53d4a6dbfc1b29b9f88ac3484a9bb9c04315b5033201070d23edbc0` | `65d1d9946dcc664de70f41681a27f0265e440ff4694a7db4e8a459fef4b5be1f` |
 
-仅凭构建号能否唯一确定是哪次运行？v1.0.0 的构建号在 `ci` 和 `release` 的运行列表中各对应哪次运行？<填写>
+仅凭构建号不能唯一确定是哪次运行。`build_no` 取自 `github.run_number`，每个工作流各自从 1 开始计数。`v1.0.0` 的构建号是 1，但仓库中同时存在 `ci` 的[第 1 次运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39558591004)（run 39558591004，提交 `ef89a31`，事件为 push 到 main）和 `release` 的[第 1 次运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048)（run 39574857048，提交 `e2acab7`，事件为 tag `v1.0.0`），所以 `build_no=1` 不能唯一定位运行。`BUILD_INFO` 中的 `run_id` 取自全局唯一的 `github.run_id`，`trace.sh` 据此给出运行链接。`v1.0.1` 的构建号是 3，因为中间的 [release 运行](https://github.com/jeff-060111/ops-lab1-14/actions/runs/39576523847)（tag `v0.0.1`）虽在 release gate 处失败，仍占用了构建号 2。
 
-发布 v1.0.1 之后重新下载 v1.0.0 的附件，计算得到的 sha256：<填写>。与上表中发布当时的值是否一致？<填写>
+发布 `v1.0.1` 后重新下载 `v1.0.0` 附件，计算得到的 sha256 为 `2fb80a7fa53d4a6dbfc1b29b9f88ac3484a9bb9c04315b5033201070d23edbc0`，与发布时记录的值完全一致，说明所下载的 Release 附件内容未变化。
 
 `trace.sh` 输出（v1.0.0）：
 
 ```text
-<粘贴>
+== 1. 校验和
+enroll-conflict_1.0.0_linux_amd64.tar.gz: OK
+== 2. 制品里的 BUILD_INFO
+name=enroll-conflict
+version=1.0.0
+build_no=1
+run_id=39574857048
+commit=e2acab7b9d372db8f9e87dd5764d3ad928618f02
+go=go1.26.9
+== 3. 提交 e2acab7b9d372db8f9e87dd5764d3ad928618f02
+作者: WANG YIBO <wyibo8981@gmail.com>
+时间: 2026-10-21T17:07:55+08:00
+标题: ci: add tag release workflow (#6)
+主干: 该提交在 origin/main 的历史上
+指向它的 tag: v1.0.0
+版本号: 1.0.0    构建号: 1
+提交页面（含关联的 PR）: https://github.com/jeff-060111/ops-lab1-14/commit/e2acab7b9d372db8f9e87dd5764d3ad928618f02
+构建它的运行: https://github.com/jeff-060111/ops-lab1-14/actions/runs/39574857048
 ```
 
 `trace.sh` 输出（v1.0.1）：
 
 ```text
-<粘贴>
+== 1. 校验和
+enroll-conflict_1.0.1_linux_amd64.tar.gz: OK
+== 2. 制品里的 BUILD_INFO
+name=enroll-conflict
+version=1.0.1
+build_no=3
+run_id=39584254408
+commit=15c1efa7d0a5296bababf36f433ac00ed2492c32
+go=go1.26.9
+== 3. 提交 15c1efa7d0a5296bababf36f433ac00ed2492c32
+作者: jeff-060111 <wwj051212@sjtu.edu.cn>
+时间: 2026-10-21T18:05:54+08:00
+标题: Add version section to README (#7)
+主干: 该提交在 origin/main 的历史上
+指向它的 tag: v1.0.1
+版本号: 1.0.1    构建号: 3
+提交页面（含关联的 PR）: https://github.com/jeff-060111/ops-lab1-14/commit/15c1efa7d0a5296bababf36f433ac00ed2492c32
+构建它的运行: https://github.com/jeff-060111/ops-lab1-14/actions/runs/39584254408
 ```
 
-任务 6 第 4 步，两次 `/version` 的输出：
+任务 6 第 4 步，两次 `/version` 的输出（先运行 v1.0.1，再换回 v1.0.0）：
 
-```text
-<运行 v1.0.1 时>
-<换回 v1.0.0 后>
+```json
+{"version":"1.0.1","commit":"15c1efa7d0a5296bababf36f433ac00ed2492c32","build_no":"3","go":"go1.26.9"}
+{"version":"1.0.0","commit":"e2acab7b9d372db8f9e87dd5764d3ad928618f02","build_no":"1","go":"go1.26.9"}
 ```
 
 ## 5. 数据
