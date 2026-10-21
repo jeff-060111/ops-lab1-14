@@ -1,0 +1,71 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      # TODO 1
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.9'
+
+      # TODO 2：测试前打印上下文，测试失败也能看到
+      - name: Print GitHub context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          SHA: ${{ github.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          echo "event_name=$EVENT_NAME"
+          echo "ref=$REF"
+          echo "sha=$SHA"
+          echo "pr_head_sha=$PR_HEAD_SHA"
+
+      # TODO 3：三个检查各自一个 step
+      - name: make fmt-check
+        run: make fmt-check
+
+      - name: make vet
+        run: make vet
+
+      - name: make test
+        run: make test
+
+      # TODO 4：只在 push 到 main 时打包
+      - name: make package
+        if: github.event_name == 'push'
+        env:
+          VERSION: 0.0.0-main
+          BUILD_NO: ${{ github.run_number }}
+          RUN_ID: ${{ github.run_id }}
+          COMMIT: ${{ github.sha }}
+        run: |
+          make package
+          sha256sum dist/* || true
+          for f in dist/*.tar.gz; do
+            [ -e "$f" ] || continue
+            sha256sum "$f" > "$f.sha256"
+          done
+
+      - name: Upload artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-${{ github.sha }}-${{ github.run_number }}
+          path: |
+            dist/*.tar.gz
+            dist/*.tar.gz.sha256
+          retention-days: 14
